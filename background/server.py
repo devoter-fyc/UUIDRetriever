@@ -36,6 +36,7 @@ else:
 def handle_client(sock: socket.socket, addr: socket._RetAddress):
     print(f"Connection from {addr} has been established.")
     sock.send(b"Welcome.")
+    err = 0
     while True:
         try:
             data = sock.recv(2048).decode()
@@ -53,20 +54,21 @@ def handle_client(sock: socket.socket, addr: socket._RetAddress):
         except FileNotFoundError:
             print("File is not found.")
             sock.send(b"File is not found.")
-            return 1
+            err = 1
         except json.JSONDecodeError:
             print("JSON format is illegal.")
             sock.send(b"JSON format is illegal.")
-            return 10
+            err = 10
         except IOError as e:
             print(f"Caught IOError: {e}")
-            return -1
+            err = 2
         except Exception as e:
             print(f"Unknown error occurred: {e}")
-            return -1
-        sock.close()
-        print(f"Connection from {addr} closed.")
-        return 0
+            err = -1
+        finally:
+            sock.close()
+            print(f"Connection from {addr} closed.")
+        return err
 
 while True:
     sock, addr = s.accept()
