@@ -7,8 +7,21 @@ import java.rmi.RemoteException;
 public class Client {
     public static void main(String[] args) throws Exception{
        var h = new Handler(new Socket(args[0], Integer.parseInt(args[1])), args[2]);
-       h.run();
+       if (h.run().equals("")) {
+              System.out.println("Error has proobably occurred.");
+              throw new TestException("Error has proobably occurred.");
+       }
        System.out.println("Test done.");
+    }
+}
+
+class TestException extends RuntimeException {
+    public TestException() {
+        super();
+    }
+    
+    public TestException(String message) {
+        super(message);
     }
 }
 
